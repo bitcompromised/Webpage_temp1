@@ -21,7 +21,7 @@ let authPayments = authdb.get("payments", {persistent_save: true}); // +?
 
 let authenticator = await modules.get("authenticator", http, authUsers, authPayments, crypt); // ???
 authenticator.InitPaymentSystem();
-let torn_AttackListOperator = await (await modules.get( "TORN_AttackList", http, targetUsers, dudTargets)).init(); // ???
+let torn_AttackListOperator = await (await modules.get( "TORN_AttackList", await modules.get( "http"), await modules.get( "https"), targetUsers, dudTargets)).init(); // ???
 
 
 // npm install express express-session crypto
@@ -55,6 +55,7 @@ app.get('/scan/:Amt/:tbsMax/:tbsMin/:key',async (request, response)=>{
     // Authenticate User
     switch(authed){
         case 1: // Auth Cleared
+            // Broke!!! :(... Worked previously...
             let targets = await torn_AttackListOperator.get(Math.min(args.Amt, 5), Math.min( 9e12, args.tbsMax), Math.max(0, args.tbsMin), args.key);
             //if (targets === -1) return response.json({error:"invalid key"});
             console.log("target: ",targets);
@@ -66,12 +67,21 @@ app.get('/scan/:Amt/:tbsMax/:tbsMin/:key',async (request, response)=>{
     }
     response.json([args, ip]);
 })
-app.get('/addtime/:userid/:ms', async(request)=>{
+app.get('/addtime/:userid/:ms', async(request, response)=>{
+    response.send("Fuck nigga, im loading shit lol");
+})
+app.get('/info', (request,res)=>{
 
+})
+app.get('/info.html',(request, res)=>{
+    res.send(`
+    Hello. This is a project by [??????]
+    this project [!potentially] scrapes large amounts of [past?current] users, sorts them, and then
+    piggybacking of of www.lol-manager.com/api/battlestats/$$tornkey$$/$$userid$$/7.6/
+    `)
 })
 const log = console.log;
 app.listen(80, async () => {
     console.log(`Server is running on port ${80}`);
-    log(targetUsers.length);
-    log(dudTargets.length);
+    console.log(await torn_AttackListOperator.update());
 });
